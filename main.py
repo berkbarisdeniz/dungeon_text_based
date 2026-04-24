@@ -8,13 +8,24 @@ class Player:
         self.lvl = 1
         self.xp = 0
         self.xp_to_lvl = 20*self.lvl
-        self.base_dmg = 10
+        self.base_dmg = 40
         self.equipped_weapon = None
         self.equipped_armor = None
         self.inventory = []
 
-    def add_item(self,new_item):
-        self.inventory.append(new_item)
+    def add_item(self,item_id):
+        new_item = self.item_release(item_id)
+        if new_item not in self.inventory :
+            self.inventory.append(new_item)
+            print(new_item)
+        else:
+            pass
+        
+
+    def item_release(self,item_id):
+            item_data = ITEM_DB[item_id]
+            new_item = Item(name=item_data["name"],item_type=item_data["item_type"],value=item_data["value"])
+            return new_item
     
     def show_inventory(self):
         if self.inventory :
@@ -22,7 +33,7 @@ class Player:
                 print(f"{index}. {item.name} (+{item.value} {item.item_type})")
 
     def equip_item(self,item):
-        if item.item_type =="weapon":
+        if item.item_type =="damage":
             if self.equipped_weapon :
                 self.unequip_item("weapon")
                 print(f"Giyilen eşya çıkarıldı.")
@@ -43,7 +54,7 @@ class Player:
             print("Bu eşya kullanılamaz.")
 
     def  unequip_item(self,slot_type):
-        if slot_type == "weapon" and self.equipped_weapon:
+        if slot_type == "damage" and self.equipped_weapon:
             item = self.equipped_weapon
             self.base_dmg -= item.value
             self.inventory.append(item)
@@ -67,11 +78,8 @@ class Player:
     
     def heal(self,heal_potion=None):
         self.hp += 15
-        self.stm += 10
         if self.hp > self.max_hp:
             self.hp = self.max_hp
-        if self.stm > self.max_stm:
-            self.stm = self.max_stm
     
     def gain_xp(self, is_enemy_killed,enemy_lvl):
         if is_enemy_killed:
@@ -90,7 +98,7 @@ class Enemy:
     def __init__(self,player_max_hp,player_base_dmg,player_lvl):
         self.name = random.choice(["Yandan Yemiş Ork","Japon Askeri","Akasya Durağı Obayana","Gerçek Joker","Sessiz Osuruk"])
         self.hp = int(player_max_hp * player_lvl * 0.9)
-        self.base_dmg = int(player_base_dmg * player_lvl * 0.92)
+        self.base_dmg = int((player_base_dmg/5) * player_lvl * 0.92)
         self.lvl = random.choice([ lvl for lvl in range(player_lvl-1,player_lvl +3) if lvl >=1])
 
 
@@ -112,12 +120,12 @@ ITEM_DB = {
     "fena_guzel_zırh": {"name":"Fena Güzel Zırh","item_type":"armor","value":20},
     "en_iyi_zirh": {"name":"En İyi Zırh (gerçekten)","item_type":"armor","value":25},
     "kucuk_iksir": {"name": "Küçük İksir", "item_type": "heal", "value": 15},
-    "kucuk_tahta_kılıc": {"name": "Küçük Tahta Kılıç", "item_type": "weapon", "value": 3},
-    "kucuk_kılıc": {"name": "Küçük Kılıç", "item_type": "weapon", "value": 5},
-    "orta_boy_kılıc": {"name": "Orta Boy Kılıç", "item_type": "weapon", "value": 9},
-    "buyuk_kılıc": {"name": "Buyuk Kılıç", "item_type": "weapon", "value": 12},
-    "en_buyuk_kılıc": {"name": "En Büyük Kılıç", "item_type": "weapon", "value": 15},
-    "en_buyuk_kılıctan_biraz_buyuk_kılıc": {"name": "En Büyük Kılıç'tan Biraz Büyük Kılıç", "item_type": "weapon", "value": 18}
+    "kucuk_tahta_kılıc": {"name": "Küçük Tahta Kılıç", "item_type": "damage", "value": 3},
+    "kucuk_kılıc": {"name": "Küçük Kılıç", "item_type": "damage", "value": 5},
+    "orta_boy_kılıc": {"name": "Orta Boy Kılıç", "item_type": "damage", "value": 9},
+    "buyuk_kılıc": {"name": "Buyuk Kılıç", "item_type": "damage", "value": 12},
+    "en_buyuk_kılıc": {"name": "En Büyük Kılıç", "item_type": "damage", "value": 15},
+    "en_buyuk_kılıctan_biraz_buyuk_kılıc": {"name": "En Büyük Kılıç'tan Biraz Büyük Kılıç", "item_type": "damage", "value": 18}
 }
 
 player = Player()
@@ -191,7 +199,7 @@ def random_events(player):
                     ozellik = "maksimum can"
                     print(f"{new_item.name}. Sağladığı özellik: +{new_item.value} {ozellik}")
 
-                elif new_item.item_type =="weapon":
+                elif new_item.item_type =="damage":
                     ozellik = "saldırı gücü"
                     print(f"{new_item.name}. Sağladığı özellik: +{new_item.value} {ozellik}")
                 
