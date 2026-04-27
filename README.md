@@ -1,0 +1,1 @@
+Backend teknolojilerini kullanmaya çalıştığım proje. Oyun ana döngüsünü bitirdikten sonra redis, postgresql, docker gibi teknolojileri entegre etmeye çalışacağım. Bu vesileyle oyunu da görsel ve oynanış olarak çeşitlendirmeyi hedefliyorum.
