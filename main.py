@@ -47,7 +47,6 @@ class Player:
                 print(f"Giyilen eşya çıkarıldı.")
             self.equipped_armor = item
             self.max_hp += item.value
-            self.hp += item.value
             self.inventory.remove(item)
             print(f"{item.name} kuşandın! Canın {item.value} arttı.")
         else:
@@ -63,6 +62,7 @@ class Player:
         elif slot_type == "armor" and self.equipped_armor:
             item = self.equipped_armor
             self.max_hp -= item.value
+            
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
             self.inventory.append(item)
